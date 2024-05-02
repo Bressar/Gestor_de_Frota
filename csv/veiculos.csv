@@ -1,0 +1,32 @@
+ID,Marca,Modelo,Categoria,Transmissão,Tipo de Veículo,Quant. Pessoas,Nome da Imagem,Valor da Diária,Última Rev.,Próxima Rev.,Última Insp
+1,BMW,Bmw420,Luxo,Automática,Carro,4,bmw420.jpg,45.5,2023-11-02,2024-05-02,2023-06-12
+2,Tesla,Model Y,Luxo,Automática,Carro,5,tesla.jpg,45.5,2024-01-05,2024-06-05,2023-12-15
+3,Fiat,Fiat 500,Pequeno,Mecânica,Carro,4,fiat500.jpg,25.5,2023-01-05,2024-04-05,2024-10-12
+4,Renault,Captur,Médio,Mecânica,Carro,5,captur.jpg,25.5,2024-02-05,2024-07-05,2023-12-05
+5,Mercedes,Vito 111,Grande,Mecânica,Carro,3,vito.jpg,45.5,2023-12-02,2024-04-02,2023-04-02
+6,BMW,i3,Pequeno,Automática,Carro,4,i3.jpg,35.5,2024-03-01,2024-09-01,2023-12-01
+7,Volkswagen,Crafter,Grande,Mecânica,Carro,3,crafter.jpg,35.5,2024-03-01,2024-04-01,2024-05-15
+8,Renault,Clio,Médio,Mecânica,Carro,5,clio.jpg,25.5,2023-02-05,2024-07-05,2023-02-05
+9,Seat,Ibiza,Médio,Automática,Carro,4,ibiza.jpg,25.5,2023-06-05,2024-06-05,2023-09-17
+10,Mercedes,Vito,Grande,Mecânica,Carro,9,vito_carrinha.jpg,45.5,2023-01-05,2024-01-05,2022-06-05
+11,Nissan,Qashqai,SUV,Mecânica,Carro,5,qashqai.jpg,35.5,2024-03-01,2025-03-01,2023-06-01
+12,Seat,Ateca,SUV,Mecânica,Carro,5,ateca.jpg,35.5,2023-11-02,2024-12-12,2023-10-22
+13,Citroen,C3,Médio,Mecânica,Carro,5,c3.jpg,35.5,2023-06-07,2024-07-11,2023-09-27
+14,Honda,PCX,Pequeno,Mecânica,Moto,1,pcx.png,25.5,2023-10-09,2024-05-09,2023-11-12
+15,BMW,r1300,Médio,Mecânica,Moto,1,r1300.png,35.5,2022-01-05,2022-07-05,2022-01-10
+16,Seat,Arona,SUV,Mecânica,Carro,5,captur.jpg,25.5,2023-01-13,2023-08-13,2023-07-25
+17,Dacia,Jogger,Grande,Mecânica,Carro,7,ateca.jpg,45.5,2023-04-05,2024-01-05,2024-04-02
+19,Citroen,C3,Médio,Mecânica,Carro,5,c3.jpg,35.5,2022-12-05,2023-12-05,2022-12-22
+20,Dacia,Jogger,Grande,Mecânica,Carro,7,troc_pax_tenda.png,45.5,2023-04-05,2024-04-05,2023-04-10
+21,BMW,Bmw420,Luxo,Automática ,Carro,4,bmw420.jpg,45.5,2023-04-02,2024-04-02,2023-04-03
+22,Nissan,Qashqai,SUV,Mecânica,Carro,5,qashqai.jpg,35.5,2023-03-28,2024-03-28,2023-03-22
+23,Tesla,Model Y,Luxo,Automática ,Carro,5,tesla.jpg ,45.5,2023-03-28,2024-03-28,2023-04-05
+24,Mercedes,Vito,Grande,Mecânica ,Carro,9,vito_carrinha.jpg ,45.5,2023-03-28,2024-03-28,2023-04-10
+25,Mercedes,Vito 111,Grande,Mecânica ,Carro,3,vito.jpg ,45.5,2023-03-28,2024-03-28,2023-03-29
+26,BMW,Bmw420,Luxo,Automática ,Carro,4,bmw420.jpg,45.5,2023-04-02,2024-04-02,2023-04-03
+27,Tesla,Model Y,Luxo,Automática ,Carro,5,tesla.jpg,45.5,2023-04-02,2024-04-02,2023-04-03
+28,Honda,PCX,Pequeno,Mecânica,Moto,1,pcx.png  ,25.5,2023-04-05,2024-04-05,2023-04-10
+29,BMW,r1300,Médio,Mecânica,Moto,1,r1300.png ,25.5,2023-04-05,2024-04-05,2023-04-10
+30,Citroen,C3,Médio,Mecânica,Carro,5,c3.jpg,35.5,2023-12-05,2024-12-05,2023-12-22
+31,Renault,Clio,Médio,Mecânica,Carro,5,clio.jpg,25.5,2023-12-05,2024-12-05,2023-12-22
+32,Renault,Clio,Médio,Mecânica,Carro,5,clio.jpg,25.5,2023-12-05,2024-12-05,2023-09-01
