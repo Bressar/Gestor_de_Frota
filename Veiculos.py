@@ -3,7 +3,8 @@ Menu Flutuante - aberto a partir de app.py
 Classe Janela veiculos e seus metodos de:
 Listar, Registar, Alterar e Remover
 ps: no app.py está a estrutura completa do dasnhborad
-21/03/2024 - last version
+21/03/2024 - old version
+27/05/2024 - new version
 Douglas Bressar
 """
 import tkinter as tk
@@ -15,19 +16,33 @@ import csv
 from openpyxl import Workbook
 import os
 import pandas as pd
+import customtkinter as ctk
+from customtkinter import *
+from datetime import datetime, timedelta
+
+ctk.set_appearance_mode("dark")  # Modo de aparência: "dark" ou "light"
+ctk.set_default_color_theme("recursos/amarelo.json")
 
 class Janela_veiculos:
     def __init__(self, root,):
         self.root = root
         self.db= "database/veiculos.db" # var para aceder a base de dados
-        self.cor1 = 'azure3'  # fundo geral
-        self.cor2 = 'azure2'  # botões
-        self.cor3 = 'white smoke'  # campos de dados
+        self.cor1 = "#2a2d2e"  #  fundo geral
+        self.cor2 = '#FF8C00'  # botões Dark Orange
+        self.cor3 = 'gray'  # campos de dados
         self.csv_path = "csv" # caminho pro arquivo csv
         self.excel_path = "excel" # caminho pro arquivo xls
         # Cria diretórios
         os.makedirs(self.csv_path, exist_ok=True)
         os.makedirs(self.excel_path, exist_ok=True)
+
+    # função para deixar 2 cores no botão, ao se usar o mouse...
+    def mudar_cor(is_hovered):
+        if is_hovered:
+            button_export.config(background="#FF4500")  # Cor ao passar o mouse -> OrangeRed
+        else:
+            button_export.config(background=self.cor2)  # Cor normal
+
 
     def exportar_csv(self): # função para exportar em .csv
         con = sqlite3.connect(self.db) # conecta ao banco de dados
@@ -86,7 +101,7 @@ class Janela_veiculos:
         # Título
         estilo_label_Titulos_quadros = ("Verdana Bold", 12)  # estilo de texto
         label_veiculos_listados = ttk.Label(nova_janela, text="Veículos Listados", font=estilo_label_Titulos_quadros,
-                                            background= self.cor1)
+                                            background= self.cor1, foreground="white")
         label_veiculos_listados.place(x=20, y=10, width=200, height=30)
         # Cria uma ScrolledText para exibir os dados
         veiculos_listados_scrol = scrolledtext.ScrolledText(nova_janela, width=1165, height=400, bg=self.cor3)
@@ -97,8 +112,7 @@ class Janela_veiculos:
         veiculos_listados_scrol.insert(tk.END, veiculos)
         veiculos_listados_scrol.configure(state="disabled")
         # Botão "Exportar" com um menu suspenso (dropdown) contendo as opções de exportação para CSV e Excel
-        button_export = tk.Menubutton(nova_janela, text="Exportar", font=("Verdana", 10),
-                                      relief=tk.RAISED, bg=self.cor2)
+        button_export = tk.Menubutton(nova_janela, text="Exportar", font=("Verdana", 10), relief=tk.FLAT, bg=self.cor2)
         button_export.place(x = 1085, y = 450, width = 100, height = 30)
         menu_export = tk.Menu(button_export, tearoff=0)
         button_export.config(menu=menu_export)
@@ -106,7 +120,7 @@ class Janela_veiculos:
         menu_export.add_command(label="Exportar para Excel", command=self.exportar_excel)
 
 
-# Método inserir_veiculo -> para inserir dados no banco de dados dos veiculos
+    # Método inserir_veiculo -> para inserir dados no banco de dados dos veiculos
     def inserir_veiculo(self, dados):
         with sqlite3.connect(self.db) as con:
             cursor = con.cursor()
@@ -128,7 +142,7 @@ class Janela_veiculos:
         # Criar um widget com os campos para a edição
         estilo_label_Titulos_quadros = ("Verdana Bold", 12)
         label_veiculos_registar = ttk.Label(nova_janela, text="Registar Veículos", font=estilo_label_Titulos_quadros,
-                                            background= self.cor1)
+                                            background= self.cor1, foreground="white")
         label_veiculos_registar.place(x=20, y=10, width=200, height=30)
 
         # Campos de entrada para os dados do veículo
@@ -139,7 +153,7 @@ class Janela_veiculos:
 
         # Posicionar e criar campos de entrada para cada etiqueta
         for i, etiqueta in enumerate(etiquetas):
-            label_etiqueta = ttk.Label(nova_janela, text=etiqueta, background=self.cor1)
+            label_etiqueta = ttk.Label(nova_janela, text=etiqueta, background=self.cor1, foreground="white")
             label_etiqueta.place(x=20, y=50 + 30 * i, width=150, height=25)
             entrada_campos[etiqueta] = tk.Entry(nova_janela)
             entrada_campos[etiqueta].place(x=180, y=50 + 30 * i, width=200, height=25)
@@ -151,7 +165,7 @@ class Janela_veiculos:
             entrada_campos["Quantidade de Pessoas:"].get(), entrada_campos["Imagem:"].get(),
             entrada_campos["Valor da Diária:"].get(), entrada_campos["Última Revisão:"].get(),
             entrada_campos["Próxima Revisão:"].get(), entrada_campos["Última Inspeção:"].get()
-        ]), font=("Verdana", 10), relief=tk.RAISED, bg=self.cor2)
+        ]), font=("Verdana", 10), relief=tk.FLAT, bg=self.cor2)
         button_inserir.place(x=260, y=390, width=120, height=30)
 
 
@@ -199,7 +213,7 @@ class Janela_veiculos:
         # Título da Janela
         estilo_label_Titulos_quadros = ("Verdana Bold", 12)
         label_veiculos_registar = ttk.Label(nova_janela, text="Editar Veículo", font=estilo_label_Titulos_quadros,
-                                            background=self.cor1)
+                                            background=self.cor1, foreground="white")
         label_veiculos_registar.place(x=20, y=10, width=200, height=30)
 
         etiquetas = ["ID:", "Marca:", "Modelo:", "Categoria:", "Transmissão:", "Tipo de Veículo:",
@@ -208,7 +222,7 @@ class Janela_veiculos:
         entrada_campos = {} # Dicionário para armazenar os campos de entrada
 
         for i, etiqueta in enumerate(etiquetas):
-            label_etiqueta = ttk.Label(nova_janela, text=etiqueta, background=self.cor1)
+            label_etiqueta = ttk.Label(nova_janela, text=etiqueta, background=self.cor1, foreground="white")
             label_etiqueta.place(x=20, y=50 + 30 * i, width=150, height=25)
             entrada_campos[etiqueta] = tk.Entry(nova_janela)
             entrada_campos[etiqueta].place(x=180, y=50 + 30 * i, width=200, height=25)
@@ -221,10 +235,10 @@ class Janela_veiculos:
 
         # Botões para buscar e salvar alterações
         button_buscar = tk.Button(nova_janela, text="Buscar", command=buscar_veiculo, font=("Verdana", 10),
-                                  relief=tk.RAISED, bg=self.cor2)
+                                  relief=tk.FLAT, bg=self.cor2)
         button_buscar.place(x=300, y=50, width=80, height=25)
-        button_salvar = tk.Button(nova_janela, text="Guardar Alterações", command=salvar_alteracoes,
-                                  font=("Verdana", 10), relief=tk.RAISED, bg=self.cor2)
+        button_salvar = tk.Button(nova_janela, text="Guardar Alterações", command=salvar_alteracoes, relief=tk.FLAT,
+                                  font=("Verdana", 10), bg=self.cor2)
         button_salvar.place(x=20, y=450, width=150, height=30)
 
 
@@ -237,15 +251,16 @@ class Janela_veiculos:
         # Título da janela + listbox
         estilo_label_Titulos_quadros = ("Verdana Bold", 12)
         label_veiculos_remover = ttk.Label(nova_janela, text="Remover Veículo", font=estilo_label_Titulos_quadros,
-                                           background=self.cor1)
+                                           background=self.cor1, foreground="white")
         label_veiculos_remover.place(x=20, y=10, width=200, height=30)
         # Label do buscar ID
-        label_id = ttk.Label(nova_janela, text="Insira o ID do veículo:", font=("Verdana", 10), background=self.cor1)
+        label_id = ttk.Label(nova_janela, text="Insira o ID do veículo:", font=("Verdana", 10),
+                             background=self.cor1, foreground="white")
         label_id.place(x=20, y=50, width=150, height=25)
         entrada_id = ttk.Entry(nova_janela)
         entrada_id.place(x=170, y=50, width=60, height=25)
         # Listbox para exibir as informações do veículo
-        remover_veiculos_listbox = tk.Listbox(nova_janela, width=360, height=210)
+        remover_veiculos_listbox = tk.Listbox(nova_janela, width=360, height=210, bg=self.cor3)
         remover_veiculos_listbox.place(x=20, y=90, width=360, height=210)
 
 
@@ -273,7 +288,7 @@ class Janela_veiculos:
 
         # Botão para buscar o veículo
         button_buscar = tk.Button(nova_janela, text="Buscar", command=buscar_veiculo, font=("Verdana", 10),
-                                  relief=tk.RAISED, bg=self.cor2)
+                                  relief=tk.FLAT, bg=self.cor2)
         button_buscar.place(x=300, y=50, width=80, height=25)
 
 
@@ -289,5 +304,5 @@ class Janela_veiculos:
                 messagebox.showerror("Erro", "Insira um ID para excluir!")
         # Botão para confirmar a exclusão do veículo
         button_remover = tk.Button(nova_janela, text="Remover", command=confirmar_exclusao, font=("Verdana", 10),
-                                   relief=tk.RAISED, bg=self.cor2)
+                                   relief=tk.FLAT, bg=self.cor2)
         button_remover.place(x=20, y=310, width=120, height=30)

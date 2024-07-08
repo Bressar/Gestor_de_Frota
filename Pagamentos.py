@@ -14,8 +14,13 @@ import sqlite3
 import csv
 from openpyxl import Workbook
 import os
-from datetime import datetime
 import pandas as pd
+import customtkinter as ctk
+from customtkinter import *
+from datetime import datetime, timedelta
+
+ctk.set_appearance_mode("dark")  # Modo de aparência: "dark" ou "light"
+ctk.set_default_color_theme("recursos/amarelo.json")
 
 
 class Janela_pagamentos:
@@ -25,9 +30,9 @@ class Janela_pagamentos:
         self.db_reservas = "database/reservas.db"
         self.db_clientes = "database/clientes.db"
         self.db_veiculos = "database/veiculos.db"
-        self.cor1 = 'azure3'  # fundo geral
-        self.cor2 = 'azure2'  # botões
-        self.cor3 = 'white smoke'  # campos de dados
+        self.cor1 = "#2a2d2e"  # fundo geral
+        self.cor2 = '#FF8C00'  # botões Dark Orange
+        self.cor3 = 'gray'  # campos de dados
         self.csv_path = "csv"
         self.excel_path = "excel"
         #self.criar_pagamento()  # Processa as reservas e cria os pagamentos
@@ -91,25 +96,24 @@ class Janela_pagamentos:
         # Título
         estilo_label_Titulos_quadros = ("Verdana Bold", 12)
         label_pagamentos_listados = ttk.Label(nova_janela, text="Pagamentos Listados",
-                                            font=estilo_label_Titulos_quadros, background=self.cor1)
+                                            font=estilo_label_Titulos_quadros, background=self.cor1, foreground="white")
         label_pagamentos_listados.place(x=20, y=10, width=300, height=30)
         # ScrolledText para exibir os dados
-        pagamentos_listados_scrol = scrolledtext.ScrolledText(nova_janela, width=760, height=400)
+        pagamentos_listados_scrol = scrolledtext.ScrolledText(nova_janela, width=760, height=400, bg=self.cor3)
         pagamentos_listados_scrol.pack(expand=True, fill='both')
         pagamentos_listados_scrol.place(x=20, y=40, width=960, height=400)
         # Obtém os dados formatados e os exibe na ScrolledText
         pagamentos = self.listar_pagamentos()# recebe os dados formatados em pandas
         pagamentos_listados_scrol.insert(tk.END, pagamentos)
         pagamentos_listados_scrol.configure(state="disabled")
+
         # Botão "Exportar" com um menu suspenso (dropdown) contendo as opções de exportação para CSV e Excel
-        button_export = tk.Menubutton(nova_janela, text="Exportar", font=("Verdana", 10),
-                                      relief=tk.RAISED, bg=self.cor2)
+        button_export = tk.Menubutton(nova_janela, text="Exportar", font=("Verdana", 10), relief=tk.FLAT, bg=self.cor2)
         button_export.place(x=860, y=450, width=100, height=30)
         menu_export = tk.Menu(button_export, tearoff=0)
         button_export.config(menu=menu_export)
         menu_export.add_command(label="Exportar para CSV", command=self.exportar_csv)
         menu_export.add_command(label="Exportar para Excel", command=self.exportar_excel)
-
 
 # Método Remover pagamentos - para excluir pagamentos de pagamentos.db
     def janela_remover_pagamentos(self, id_pagamento):
@@ -120,15 +124,16 @@ class Janela_pagamentos:
         # Título da janela + listbox
         estilo_label_Titulos_quadros = ("Verdana Bold", 12)
         label_pagamentos_remover = ttk.Label(nova_janela, text="Remover Pagamento", font=estilo_label_Titulos_quadros,
-                                             background=self.cor1)
+                                             background=self.cor1, foreground="white")
         label_pagamentos_remover.place(x=20, y=10, width=200, height=30)
         # Label do buscar ID
-        label_id = ttk.Label(nova_janela, text="Insira o ID do pagamento:", font=("Verdana", 10), background=self.cor1)
+        label_id = ttk.Label(nova_janela, text="Insira o ID do pagamento:", font=("Verdana", 10), background=self.cor1,
+                             foreground="white")
         label_id.place(x=20, y=50, width=200, height=25)
         entrada_id = ttk.Entry(nova_janela)
         entrada_id.place(x=200, y=50, width=60, height=25)
         # Listbox para exibir as informações do veículo
-        remover_pagamentos_listbox = tk.Listbox(nova_janela, width=360, height=140)
+        remover_pagamentos_listbox = tk.Listbox(nova_janela, width=360, height=140, bg=self.cor3)
         remover_pagamentos_listbox.place(x=20, y=90, width=360, height=140)
 
         def buscar_pagamento(): # Função para buscar o pagamento no banco de dados e exibir na listbox
@@ -155,7 +160,7 @@ class Janela_pagamentos:
 
         # Botão para buscar o pagamento
         button_buscar = tk.Button(nova_janela, text="Buscar", command=buscar_pagamento, font=("Verdana", 10),
-                                  relief=tk.RAISED, bg=self.cor2)
+                                  relief=tk.FLAT, bg=self.cor2)
         button_buscar.place(x=300, y=50, width=80, height=25)
 
         def confirmar_exclusao(): # Função para confirmar a exclusão do pagamento
@@ -170,7 +175,7 @@ class Janela_pagamentos:
                 messagebox.showerror("Insira um ID para excluir!")
         # Botão para confirmar a exclusão do pagamento
         button_remover = tk.Button(nova_janela, text="Remover", command=confirmar_exclusao, font=("Verdana", 10),
-                                   relief=tk.RAISED, bg=self.cor2)
+                                   relief=tk.FLAT, bg=self.cor2)
         button_remover.place(x=20, y=240, width=120, height=30)
 
 
@@ -221,11 +226,11 @@ class Janela_pagamentos:
         # Título da Janela
         estilo_label_Titulos_quadros = ("Verdana Bold", 12)
         label_reservas_registar = ttk.Label(nova_janela, text="Editar Pagamento", font=estilo_label_Titulos_quadros,
-                                            background=self.cor1)
+                                            background=self.cor1, foreground="white")
         label_reservas_registar.place(x=20, y=10, width=200, height=30)
         # etiquetas dos campos a serem preenchidos
         for i, etiqueta in enumerate(etiquetas):
-            label_etiqueta = ttk.Label(nova_janela, text=etiqueta, background=self.cor1)
+            label_etiqueta = ttk.Label(nova_janela, text=etiqueta, background=self.cor1, foreground="white")
             label_etiqueta.place(x=20, y=50 + 30 * i, width=150, height=25)
             entrada_campos[etiqueta] = tk.Entry(nova_janela)
             entrada_campos[etiqueta].place(x=180, y=50 + 30 * i, width=200, height=25)
@@ -236,10 +241,10 @@ class Janela_pagamentos:
         entrada_campos["Pagamento ID:"] = entrada_id
         # Botões para buscar e salvar alterações
         button_buscar = tk.Button(nova_janela, text="Buscar", command=buscar_pagamento, font=("Verdana", 10),
-                                  relief=tk.RAISED, bg=self.cor2)
+                                  relief=tk.FLAT, bg=self.cor2)
         button_buscar.place(x=300, y=50, width=80, height=25)
         button_salvar = tk.Button(nova_janela, text="Guardar Alterações", command=salvar_alteracoes,
-                                  font=("Verdana", 10), relief=tk.RAISED, bg=self.cor2)
+                                  font=("Verdana", 10), relief=tk.FLAT, bg=self.cor2)
         button_salvar.place(x=20, y=310, width=150, height=30)
 
 
@@ -343,17 +348,19 @@ class Janela_pagamentos:
         nova_janela.config(bg=self.cor1)
         estilo_label_Titulos_quadros = ("Verdana Bold", 12)
         label_clientes_registar = ttk.Label(nova_janela, text="Registar Pagamentos", font=estilo_label_Titulos_quadros,
-                                            background=self.cor1)
+                                            background=self.cor1, foreground="white")
         label_clientes_registar.place(x=20, y=10, width=200, height=30)
         # campo de busca do ID
-        id_reserva_label = ttk.Label(nova_janela, text="Insira o ID da Reserva:", background=self.cor1)
+        id_reserva_label = ttk.Label(nova_janela, text="Insira o ID da Reserva:", background=self.cor1,
+                                     foreground="white")
         id_reserva_label.place(x=20, y=50)
         id_reserva_entry = ttk.Entry(nova_janela)
         id_reserva_entry.place(x=20, y=80, width=200)
 
-        buscar_button = ttk.Button(nova_janela, text="Buscar", command=buscar_reserva)
-        buscar_button.place(x=145, y=78)
+        buscar_button = tk.Button(nova_janela, text="Buscar", command=buscar_reserva, relief=tk.FLAT, bg=self.cor2)
+        buscar_button.place(x=145, y=80, width=80, height=21)
         # Botão salvar
-        salvar_button = ttk.Button(nova_janela, text="Guardar Pagamento", command=salvar_pagamento)
+        salvar_button = tk.Button(nova_janela, text="Guardar Pagamento", command=salvar_pagamento,
+                                   relief=tk.FLAT, bg=self.cor2)
         salvar_button.place(x=20, y=120)
 

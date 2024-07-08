@@ -15,7 +15,7 @@ Agendar manutenção de veículos
 Veículos em Manutenção
 Exibir Veículos
 
-27/03/2024 - last version
+27/05/2024 - last version
 Douglas G. Bressar
 """
 
@@ -29,11 +29,16 @@ from openpyxl import Workbook
 import os
 from datetime import datetime, timedelta
 import pandas as pd
+import customtkinter as ctk
+from customtkinter import *
 
 from Veiculos import Janela_veiculos
 from Clientes import Janela_clientes
 from Reservas import Janela_reservas
 from Pagamentos import Janela_pagamentos
+
+ctk.set_appearance_mode("dark")  # Modo de aparência: "dark" ou "light"
+ctk.set_default_color_theme("recursos/amarelo.json")
 
 class Dashboard:
     def __init__(self, root):
@@ -50,9 +55,9 @@ class Dashboard:
         self.db_inspecoes = "database/inspecoes.db"
         self.db_reservas_mes = "database/reservas_mes.db"
         self.data_hoje = datetime.now()  # data de hoje como objeto datetime
-        self.cor1 = 'azure3' # fundo geral
-        self.cor2 = 'azure2' # botões
-        self.cor3 = 'white smoke' # campos de dados
+        self.cor1 = "#2a2d2e"  #  fundo geral
+        self.cor2 = '#FF8C00'  # botões Dark Orange
+        self.cor3 = 'gray' # campos de dados
 
 
     def manutencao(self, titulo): # Função para inserir um veículo na tabela "manutenção"
@@ -63,15 +68,16 @@ class Dashboard:
         # Título da janela + listbox
         estilo_label_manut = ("Verdana Bold", 10)
         label_manutencao = ttk.Label(nova_janela, text="Agendar Manutenção de Veículo", font=estilo_label_manut,
-                                     background=self.cor1)
+                                     background=self.cor1, foreground="white")
         label_manutencao.place(x=20, y=10, width=300, height=30)
         # Label do buscar ID
-        label_id = ttk.Label(nova_janela, text="Insira o ID do veículo:", font=("Verdana", 10), background=self.cor1)
+        label_id = ttk.Label(nova_janela, text="Insira o ID do veículo:", font=("Verdana", 10), background=self.cor1,
+                             foreground="white")
         label_id.place(x=20, y=50, width=150, height=25)
         entrada_id = ttk.Entry(nova_janela)
         entrada_id.place(x=170, y=50, width=60, height=25)
         # Listbox para exibir as informações do veículo
-        manut_veiculos_listbox = tk.Listbox(nova_janela, width=360, height=210)
+        manut_veiculos_listbox = tk.Listbox(nova_janela, width=360, height=210, bg=self.cor3)
         manut_veiculos_listbox.place(x=20, y=90, width=360, height=210)
 
         def buscar_veiculo(): # Função para buscar o veículo no banco de dados e exibir na listbox
@@ -98,7 +104,7 @@ class Dashboard:
 
         # Botão para buscar o veículo
         button_buscar = tk.Button(nova_janela, text="Buscar", command=buscar_veiculo, font=("Verdana", 10),
-                                  relief=tk.RAISED, bg=self.cor2)
+                                  relief=tk.FLAT, bg=self.cor2)
         button_buscar.place(x=300, y=50, width=80, height=25)
 
         def confirmar_manutencao(): # Função para confirmar a manutenção do veículo
@@ -124,8 +130,9 @@ class Dashboard:
                 messagebox.showerror("Erro", "Insira um ID válido!")
         # Botão para confirmar a manutenção do veículo
         button_manutencao = tk.Button(nova_janela, text="Confirmar Manutenção", command=confirmar_manutencao,
-                                      font=("Verdana", 10),relief=tk.RAISED, bg="lightgray")
+                                      font=("Verdana", 10),relief=tk.FLAT, bg=self.cor2)
         button_manutencao.place(x=20, y=310, width=200, height=30)
+
 
     def exibir_manutencao(self): # Lista de veiculos em manutenção
         with sqlite3.connect(self.db_manutencao) as con_manutencao:
@@ -338,6 +345,7 @@ class Dashboard:
         total_pagamentos = sum(valores_pagamentos)
         return total_pagamentos
 
+
     def imagem(self, title): # exibe os dados e imagem do veículo em uma janela
         nova_janela = tk.Toplevel(self.root)
         nova_janela.title("Visualizar Veículo")
@@ -346,15 +354,16 @@ class Dashboard:
         # Título da janela + listbox
         estilo_label_Titulos_quadros = ("Verdana Bold", 12)
         label_visualizar_title = ttk.Label(nova_janela, text="Visualizar Veículo", font=estilo_label_Titulos_quadros,
-                                           background=self.cor1)
+                                           background=self.cor1, foreground="white")
         label_visualizar_title.place(x=20, y=10, width=200, height=30)
         # Label do buscar ID
-        label_id = ttk.Label(nova_janela, text="Insira o ID do Veículo:", font=("Verdana", 10))
-        label_id.place(x=20, y=50, width=150, height=25)
+        label_id = ttk.Label(nova_janela, text="Insira o ID do Veículo", font=("Verdana", 10),background=self.cor1,
+                             foreground="white")
+        label_id.place(x=20, y=50, width=190, height=25)
         entrada_id = ttk.Entry(nova_janela)
-        entrada_id.place(x=710, y=50, width=40, height=25)
+        entrada_id.place(x=170, y=50, width=20, height=25)
         # Listbox para exibir as informações do veículo
-        remover_veiculos_listbox = tk.Listbox(nova_janela, width=170, height=200)
+        remover_veiculos_listbox = tk.Listbox(nova_janela, width=170, height=200, bg=self.cor3)
         remover_veiculos_listbox.place(x=20, y=90, width=170, height=200)
 
         def buscar_veiculo(): # Função para buscar o veiculo no banco de dados e exibir na listbox
@@ -381,7 +390,7 @@ class Dashboard:
                         img = Image.open(imagem_path)
                         img = ImageTk.PhotoImage(img)
                         # Criando um frame para a imagem
-                        frame_imagem = tk.Frame(nova_janela, bd=2, relief=tk.GROOVE)
+                        frame_imagem = tk.Frame(nova_janela, bd=0, relief=tk.FLAT)
                         frame_imagem.place(x=200, y=90, width=224, height=132)
                         # Exibindo a imagem dentro do frame
                         imagem_carro = tk.Label(frame_imagem, image=img)
@@ -396,8 +405,6 @@ class Dashboard:
                 messagebox.showerror("Erro", "Insira um ID para buscar.")
         # Botão para buscar o cliente
         button_buscar = tk.Button(nova_janela, text="Buscar", command=buscar_veiculo, font=("Verdana", 10),
-                                  relief=tk.RAISED, bg=self.cor2)
+                                  relief=tk.FLAT, bg=self.cor2)
         button_buscar.place(x=340, y=50, width=80, height=25)
-
-
 

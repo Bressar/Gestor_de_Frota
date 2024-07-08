@@ -15,14 +15,20 @@ import csv
 from openpyxl import Workbook
 import os
 import pandas as pd
+import customtkinter as ctk
+from customtkinter import *
+from datetime import datetime, timedelta
+
+ctk.set_appearance_mode("dark")  # Modo de aparência: "dark" ou "light"
+ctk.set_default_color_theme("recursos/amarelo.json")
 
 class Janela_reservas:
     def __init__(self, root,):
         self.root = root
         self.db= "database/reservas.db" # acesso a base de dados "reservas"
-        self.cor1 = 'azure3'  # fundo geral
-        self.cor2 = 'azure2'  # botões
-        self.cor3 = 'white smoke'  # campos de dados
+        self.cor1 = "#2a2d2e"  # fundo geral
+        self.cor2 = '#FF8C00'  # botões Dark Orange
+        self.cor3 = 'gray'  # campos de dados
         self.csv_path = "csv"
         self.excel_path = "excel"
         # Criar diretórios se não existirem
@@ -84,19 +90,21 @@ class Janela_reservas:
         # título
         estilo_label_Titulos_quadros = ("Verdana Bold", 12)
         label_reservas_listados = ttk.Label(nova_janela, text="Reservas Listadas", font=estilo_label_Titulos_quadros,
-                                            background=self.cor1)
+                                            background=self.cor1, foreground="white")
         label_reservas_listados.place(x=20, y=10, width=300, height=30)
+
         # Cria uma ScrolledText para exibir os dados
-        reservas_listados_scrol = scrolledtext.ScrolledText(nova_janela, width=600, height=400)
+        reservas_listados_scrol = scrolledtext.ScrolledText(nova_janela, width=600, height=400, bg=self.cor3)
         reservas_listados_scrol.pack(expand=True, fill='both')
         reservas_listados_scrol.place(x=20, y=40, width=580, height=400)
+
         # Obter os dados das reservas e os exibe na ScrolledText
         reservas = self.listar_reservas()
         reservas_listados_scrol.insert(tk.END, reservas)
         reservas_listados_scrol.configure(state="disabled")
         # Criar um botão "Exportar" com um menu suspenso (dropdown) contendo as opções de exportação para CSV e Excel
         button_export = tk.Menubutton(nova_janela, text="Exportar", font=("Verdana", 10),
-                                      relief=tk.RAISED, bg=self.cor2)
+                                      relief=tk.FLAT, bg=self.cor2)
         button_export.place(x = 485, y = 450, width = 100, height = 30)
         menu_export = tk.Menu(button_export, tearoff=0)
         button_export.config(menu=menu_export)
@@ -122,7 +130,7 @@ class Janela_reservas:
         nova_janela.config(bg=self.cor1)
         estilo_label_Titulos_quadros = ("Verdana Bold", 12)
         label_clientes_registar = ttk.Label(nova_janela, text="Registar Reservas", font=estilo_label_Titulos_quadros,
-                                            background=self.cor1)
+                                            background=self.cor1, foreground="white")
         label_clientes_registar.place(x=20, y=10, width=200, height=30)
 
         # campo de entrada de dados para a reserva
@@ -131,7 +139,7 @@ class Janela_reservas:
 
         # Posicionar e criar campos de entrada para cada etiqueta
         for i, etiqueta in enumerate(etiquetas):
-            label_etiqueta = ttk.Label(nova_janela, text=etiqueta, background=self.cor1)
+            label_etiqueta = ttk.Label(nova_janela, text=etiqueta, background=self.cor1, foreground="white")
             label_etiqueta.place(x=20, y=50 + 30 * i, width=150, height=25)
             entrada_campos[etiqueta] = tk.Entry(nova_janela)
             entrada_campos[etiqueta].place(x=180, y=50 + 30 * i, width=200, height=25)
@@ -141,7 +149,7 @@ class Janela_reservas:
             entrada_campos["Cliente ID:"].get(), entrada_campos["Veículo ID:"].get(),
             entrada_campos["Data inicial:"].get(), entrada_campos["Data final:"].get(),
             entrada_campos["Forma de Pagamento:"].get()
-        ]), font=("Verdana", 10), relief=tk.RAISED, bg=self.cor2)
+        ]), font=("Verdana", 10), relief=tk.FLAT, bg=self.cor2)
         button_inserir.place(x=260, y=210, width=120, height=30)
 
 
@@ -190,11 +198,11 @@ class Janela_reservas:
         # Título da Janela
         estilo_label_Titulos_quadros = ("Verdana Bold", 12)
         label_reservas_registar = ttk.Label(nova_janela, text="Editar Reserva", font=estilo_label_Titulos_quadros,
-                                            background=self.cor1)
+                                            background=self.cor1, foreground="white")
         label_reservas_registar.place(x=20, y=10, width=200, height=30)
 
         for i, etiqueta in enumerate(etiquetas):  # etiquetas dos campos a serem preenchidos
-            label_etiqueta = ttk.Label(nova_janela, text=etiqueta, background=self.cor1)
+            label_etiqueta = ttk.Label(nova_janela, text=etiqueta, background=self.cor1, foreground="white")
             label_etiqueta.place(x=20, y=50 + 30 * i, width=150, height=25)
             entrada_campos[etiqueta] = tk.Entry(nova_janela)
             entrada_campos[etiqueta].place(x=180, y=50 + 30 * i, width=200, height=25)
@@ -205,10 +213,10 @@ class Janela_reservas:
         entrada_campos["ID:"] = entrada_id
         # Botões para buscar e salvar alterações
         button_buscar = tk.Button(nova_janela, text="Buscar", command=buscar_reserva, font=("Verdana", 10),
-                                  relief=tk.RAISED, bg=self.cor2)
+                                  relief=tk.FLAT, bg=self.cor2)
         button_buscar.place(x=300, y=50, width=80, height=25)
         button_salvar = tk.Button(nova_janela, text="Guardar Alterações", command=salvar_alteracoes,
-                                  font=("Verdana", 10), relief=tk.RAISED, bg=self.cor2)
+                                  font=("Verdana", 10), relief=tk.FLAT, bg=self.cor2)
         button_salvar.place(x=20, y=250, width=150, height=30)
 
 
@@ -221,15 +229,16 @@ class Janela_reservas:
         # Título da janela + listbox
         estilo_label_Titulos_quadros = ("Verdana Bold", 12)
         label_reservas_remover = ttk.Label(nova_janela, text="Remover Reserva", font=estilo_label_Titulos_quadros,
-                                           background=self.cor1)
+                                           background=self.cor1, foreground="white")
         label_reservas_remover.place(x=20, y=10, width=200, height=30)
         # Label do buscar ID
-        label_id = ttk.Label(nova_janela, text="Insira o ID da reserva:", font=("Verdana", 10), background=self.cor1)
+        label_id = ttk.Label(nova_janela, text="Insira o ID da reserva:", font=("Verdana", 10), background=self.cor1,
+                             foreground="white")
         label_id.place(x=20, y=50, width=150, height=25)
         entrada_id = ttk.Entry(nova_janela)
         entrada_id.place(x=170, y=50, width=60, height=25)
         # Listbox para exibir as informações do veículo
-        remover_reservas_listbox = tk.Listbox(nova_janela, width=360, height=100)
+        remover_reservas_listbox = tk.Listbox(nova_janela, width=360, height=100, bg=self.cor3)
         remover_reservas_listbox.place(x=20, y=90, width=360, height=100)
 
         def buscar_reserva(): # Função para buscar a reserva no banco de dados e exibir na listbox
@@ -254,7 +263,7 @@ class Janela_reservas:
                 messagebox.showerror("Insira um ID para buscar!")
         # Botão para buscar o cliente
         button_buscar = tk.Button(nova_janela, text="Buscar", command=buscar_reserva, font=("Verdana", 10),
-                                  relief=tk.RAISED, bg=self.cor2)
+                                  relief=tk.FLAT, bg=self.cor2)
         button_buscar.place(x=300, y=50, width=80, height=25)
 
         def confirmar_exclusao(): # Função para confirmar a exclusão da reserva
@@ -269,6 +278,6 @@ class Janela_reservas:
                 messagebox.showerror("Insira um ID para excluir!")
         # Botão para confirmar a exclusão da Reserva
         button_remover = tk.Button(nova_janela, text="Remover", command=confirmar_exclusao, font=("Verdana", 10),
-                                   relief=tk.RAISED, bg=self.cor2)
+                                   relief=tk.FLAT, bg=self.cor2)
         button_remover.place(x=20, y=200, width=120, height=30)
 

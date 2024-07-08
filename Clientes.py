@@ -15,14 +15,20 @@ import csv
 from openpyxl import Workbook
 import os
 import pandas as pd
+import customtkinter as ctk
+from customtkinter import *
+from datetime import datetime, timedelta
+
+ctk.set_appearance_mode("dark")  # Modo de aparência: "dark" ou "light"
+ctk.set_default_color_theme("recursos/amarelo.json")
 
 class Janela_clientes:
     def __init__(self, root,):
         self.root = root
         self.db= "database/clientes.db" # acesso a base de dados
-        self.cor1 = 'azure3'  # fundo geral
-        self.cor2 = 'azure2'  # botões
-        self.cor3 = 'white smoke'  # campos de dados
+        self.cor1 = "#2a2d2e"   # fundo geral
+        self.cor2 = '#FF8C00'  # botões Dark Orange
+        self.cor3 = 'gray'  # campos de dados
         self.csv_path = "csv"
         self.excel_path = "excel"
         # Criar diretórios se não existirem
@@ -82,10 +88,10 @@ class Janela_clientes:
         # Título
         estilo_label_Titulos_quadros = ("Verdana Bold", 12)  # estilo de texto
         label_clientes_listados = ttk.Label(nova_janela, text="Clientes Listados", font=estilo_label_Titulos_quadros,
-                                             background=self.cor1)
+                                             background=self.cor1, foreground="white")
         label_clientes_listados.place(x=20, y=10, width=300, height=30)
         # Cria uma ScrolledText para exibir os dados
-        clientes_listados_scrol = scrolledtext.ScrolledText(nova_janela, width=610, height=400)
+        clientes_listados_scrol = scrolledtext.ScrolledText(nova_janela, width=610, height=400, bg=self.cor3)
         clientes_listados_scrol.pack(expand=True, fill='both')
         clientes_listados_scrol.place(x=20, y=40, width=610, height=400)
         # Obtém os dados formatados e os exibe na ScrolledText
@@ -94,7 +100,7 @@ class Janela_clientes:
         clientes_listados_scrol.configure(state="disabled")
         # Botão "Exportar" com um menu suspenso (dropdown) contendo as opções de exportação para CSV e Excel
         button_export = tk.Menubutton(nova_janela, text="Exportar", font=("Verdana", 10),
-                                      relief=tk.RAISED, bg=self.cor2)
+                                      relief=tk.FLAT, bg=self.cor2)
         button_export.place(x = 515, y = 450, width = 100, height = 30)
         menu_export = tk.Menu(button_export, tearoff=0)
         button_export.config(menu=menu_export)
@@ -121,7 +127,7 @@ class Janela_clientes:
         # Criar um widget com os campos para a edição
         estilo_label_Titulos_quadros = ("Verdana Bold", 12)
         label_clientes_registar = ttk.Label(nova_janela, text="Registar Clientes", font=estilo_label_Titulos_quadros,
-                                            background=self.cor1)
+                                            background=self.cor1, foreground="white")
         label_clientes_registar.place(x=20, y=10, width=200, height=30)
 
         # Campos de entrada para os dados do cliente
@@ -130,7 +136,7 @@ class Janela_clientes:
 
         # Posicionar e criar campos de entrada para cada etiqueta
         for i, etiqueta in enumerate(etiquetas):
-            label_etiqueta = ttk.Label(nova_janela, text=etiqueta, background=self.cor1)
+            label_etiqueta = ttk.Label(nova_janela, text=etiqueta, background=self.cor1, foreground="white")
             label_etiqueta.place(x=20, y=50 + 30 * i, width=150, height=25)
             entrada_campos[etiqueta] = tk.Entry(nova_janela)
             entrada_campos[etiqueta].place(x=180, y=50 + 30 * i, width=200, height=25)
@@ -139,7 +145,7 @@ class Janela_clientes:
         button_inserir = tk.Button(nova_janela, text="Inserir Cliente", command=lambda: self.inserir_cliente([
             entrada_campos["Nome:"].get(), entrada_campos["Utilizador:"].get(),
             entrada_campos["Palavra-passe:"].get(), entrada_campos["E-mail:"].get()
-        ]), font=("Verdana", 10), relief=tk.RAISED, bg=self.cor2)
+        ]), font=("Verdana", 10), relief=tk.FLAT, bg=self.cor2)
         button_inserir.place(x=260, y=180, width=120, height=30)
 
 
@@ -183,14 +189,14 @@ class Janela_clientes:
         # Título da Janela
         estilo_label_Titulos_quadros = ("Verdana Bold", 12)
         label_clientes_registar = ttk.Label(nova_janela, text="Editar Cliente", font=estilo_label_Titulos_quadros,
-                                             background=self.cor1)
+                                             background=self.cor1, foreground="white")
         label_clientes_registar.place(x=20, y=10, width=200, height=30)
 
         etiquetas = ["ID:", "Nome:", "Utilizador:", "Palavra-passe:", "E-mail:"]
         entrada_campos = {} # Dicionário para armazenar os campos de entrada
 
         for i, etiqueta in enumerate(etiquetas):# etiquetas dos campos a serem preenchidos
-            label_etiqueta = ttk.Label(nova_janela, text=etiqueta, background=self.cor1)
+            label_etiqueta = ttk.Label(nova_janela, text=etiqueta, background=self.cor1, foreground="white")
             label_etiqueta.place(x=20, y=50 + 30 * i, width=150, height=25)
             entrada_campos[etiqueta] = tk.Entry(nova_janela)
             entrada_campos[etiqueta].place(x=180, y=50 + 30 * i, width=200, height=25)
@@ -203,10 +209,10 @@ class Janela_clientes:
 
        # Botões para buscar e salvar alterações
         button_buscar = tk.Button(nova_janela, text="Buscar", command=buscar_cliente, font=("Verdana", 10),
-                                  relief=tk.RAISED, bg=self.cor2)
+                                  relief=tk.FLAT, bg=self.cor2)
         button_buscar.place(x=300, y=50, width=80, height=25)
         button_salvar = tk.Button(nova_janela, text="Guardar Alterações", command=salvar_alteracoes,
-                                  font=("Verdana", 10), relief=tk.RAISED, bg=self.cor2)
+                                  font=("Verdana", 10), relief=tk.FLAT, bg=self.cor2)
         button_salvar.place(x=20, y=220, width=150, height=30)
 
 
@@ -219,15 +225,16 @@ class Janela_clientes:
         # Título da janela + listbox
         estilo_label_Titulos_quadros = ("Verdana Bold", 12)
         label_clientes_remover = ttk.Label(nova_janela, text="Remover Cliente", font=estilo_label_Titulos_quadros,
-                                           background=self.cor1)
+                                           background=self.cor1, foreground="white")
         label_clientes_remover.place(x=20, y=10, width=200, height=30)
         # Label do buscar ID
-        label_id = ttk.Label(nova_janela, text="Insira o ID do cliente:", font=("Verdana", 10), background=self.cor1)
+        label_id = ttk.Label(nova_janela, text="Insira o ID do cliente:", font=("Verdana", 10), background=self.cor1,
+                             foreground="white")
         label_id.place(x=20, y=50, width=150, height=25)
         entrada_id = ttk.Entry(nova_janela)
         entrada_id.place(x=170, y=50, width=60, height=25)
         # Listbox para exibir as informações do veículo
-        remover_clientes_listbox = tk.Listbox(nova_janela, width=360, height=100)
+        remover_clientes_listbox = tk.Listbox(nova_janela, width=360, height=100, bg=self.cor3)
         remover_clientes_listbox.place(x=20, y=90, width=360, height=100)
 
 
@@ -255,7 +262,7 @@ class Janela_clientes:
 
         # Botão para buscar o cliente
         button_buscar = tk.Button(nova_janela, text="Buscar", command=buscar_cliente, font=("Verdana", 10),
-                                  relief=tk.RAISED, bg=self.cor2)
+                                  relief=tk.FLAT, bg=self.cor2)
         button_buscar.place(x=300, y=50, width=80, height=25)
 
 
@@ -271,5 +278,5 @@ class Janela_clientes:
                 messagebox.showerror("Insira um ID para excluir!")
         # Botão para confirmar a exclusão do cliente
         button_remover = tk.Button(nova_janela, text="Remover", command=confirmar_exclusao, font=("Verdana", 10),
-                                   relief=tk.RAISED, bg=self.cor2)
+                                   relief=tk.FLAT, bg=self.cor2)
         button_remover.place(x=20, y=200, width=120, height=30)

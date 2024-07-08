@@ -12,26 +12,35 @@ Veículos em Manutenção
 Botão Exibir Veículos
 Botão Agendar manutenção de veículos
 
-28/03/2024 - last version
+28/03/2024 - old version
+26/05/2024 _ new Version
 Douglas G. Bressar
 """
 import tkinter as tk
 from tkinter import ttk
+import customtkinter as ctk
+from customtkinter import *
 from tkinter import messagebox
-from tkinter import scrolledtext
 from PIL import Image, ImageTk
 import sqlite3
 import csv
 from openpyxl import Workbook
 import os
 import pandas as pd
-
+from tkinter import scrolledtext
+from customtkinter import CTkLabel
+import json
 from Veiculos import Janela_veiculos
 from Clientes import Janela_clientes
 from Reservas import Janela_reservas
 from Pagamentos import Janela_pagamentos
 from Metodos_dashboard import Dashboard
 
+# Definição do tema e esquema de cores
+ctk.set_appearance_mode("dark")  # Modo de aparência: "dark" ou "light"
+ctk.set_default_color_theme("recursos/amarelo.json")
+#ctk.set_default_color_theme("recursos/red.json")
+#ctk.set_default_color_theme("blue")  # Tema de cores: "blue", "green", etc.
 
 # Bancos de dados do projeto
 class Gerenciador:
@@ -40,40 +49,38 @@ class Gerenciador:
     db_reservas = 'database/reservas.db'
     db_pagamentos = 'database/pagamentos.db'
 
-
     def __init__(self, root):
         self.janela = root
         self.janela.title("Gerenciador de Frota")
-        self.janela.resizable(0, 0)  # 1,0 ou True/False Define a janela como redimensionável ou não
-        #self.janela.wm_iconbitmap('recursos/logo.ico')  # precisa da terminação do arquivo ".ico"
-        # cores
-        self.janela.geometry("1280x840")  # Define a geometria da janela
-        self.cor1 = 'azure3' # fundo geral
+        self.janela.geometry("1280x850")  # Define a geometria da janela
+        self.janela.resizable(False, False)  # Define a janela como não redimensionável
+        self.cor_fundo = "#2a2d2e"  # Fundo geral
+        self.janela.configure(bg=self.cor_fundo)
         self.cor2 = 'azure2' # botões
-        self.cor3 = 'white smoke' # campos de dados
-        self.janela.config(bg=self.cor1)  # Define a cor de fundo da janela
-        # Veiculos - instâncias"
+        self.cor3 =  'gray'#'wheat4' #'teal' #'SkyBlue3' #'DarkOrange3'
+        # self.cor3 = 'gray50' #'white smoke' # campos de dados
+
+        # Veiculos - instâncias
         self.listar_veiculos = Janela_veiculos(root)
         self.registar_veiculos = Janela_veiculos(root)
         self.editar_veiculos = Janela_veiculos(root)
         self.remover_veiculos = Janela_veiculos(root)
-        # Clientes - instâncias"
+        # Clientes - instâncias
         self.listar_clientes = Janela_clientes(root)
         self.registar_clientes = Janela_clientes(root)
         self.editar_clientes = Janela_clientes(root)
         self.remover_clientes = Janela_clientes(root)
-        # Reservas - instâncias"
+        # Reservas - instâncias
         self.listar_reservas = Janela_reservas(root)
         self.registar_reservas = Janela_reservas(root)
         self.editar_reservas = Janela_reservas(root)
         self.remover_reservas = Janela_reservas(root)
-        # Pagamentos - instâncias"
+        # Pagamentos - instâncias
         self.listar_pagamentos = Janela_pagamentos(root)
         self.janela_registar_pagamentos = Janela_pagamentos(root)
         self.editar_pagamentos = Janela_pagamentos(root)
         self.remover_pagamentos = Janela_pagamentos(root)
-        #Dashboard
-        #self.manutencao = Dashboard(root) # está definido na chamada da função
+        # Dashboard
         self.veiculos_alugados = Dashboard(root)
         self.veiculos_disponiveis = Dashboard(root)
         self.ultimos_clientes = Dashboard(root)
@@ -82,10 +89,9 @@ class Gerenciador:
         self.reservas_mes = Dashboard(root)
         self.exibir_manutencao = Dashboard(root)
         self.financeiro = Dashboard(root)
-        #self.exibir_imagem = Dashboard(root) # está definido na chamada da função
 
 
-        def contar_linhas_tabela(db_path, table_name): # função para a contagem de linhas nas tabelas
+        def contar_linhas_tabela(db_path, table_name):  # Função para a contagem de linhas nas tabelas
             try:
                 with sqlite3.connect(db_path) as connection:
                     cursor = connection.cursor()
@@ -95,159 +101,204 @@ class Gerenciador:
             except sqlite3.Error as e:
                 print(f"Erro ao contar linhas da tabela {table_name}: {e}")
                 return None
-            # Exemplo de uso:
-            #db_path = "caminho/do/banco/de/dados.db"
-            #table_name = "nome_da_tabela"
-            #quantidade_linhas = contar_linhas_tabela(db_path, table_name)
 
-        #cabeçalho da app
-        estilo_cabecalho = ("Verdana Bold", 10)
-        label1 = ttk.Label(root, text="Luxury Wheels  -  Gestão de Aluguer de Veículos", font=estilo_cabecalho,
-                           background=self.cor1)
-        label1.place(x=20, y=10, width=760, height=25)
-        # Obtém a largura do texto
-        largura_texto_label1 = label1.winfo_reqwidth()
-        # Calcula a diferença entre a largura da janela e a largura do texto
-        largura_janela = 1280  # Largura fixa definida na geometria da janela
-        diferenca = largura_janela - largura_texto_label1
-        # Move o rótulo para centralizá-lo horizontalmente
-        label1.place(x=diferenca // 2, y=15)
+
+        # função para personalizar a cor do texto de saída... Gambiarra Master!
+        def criar_label_personalizado(master, **kwargs):
+            label = ctk.CTkLabel(master, **kwargs)
+            label.configure(text_color="white")
+            return label
+
+
+        # Cabeçalho da app
+        estilo_cabecalho = ctk.CTkFont(family="Verdana", size=16, weight="bold")
+        label1 = ctk.CTkLabel(root, text="Luxury Wheels - Gestão de Aluguer de Veículos",
+                              font=estilo_cabecalho, width=760, height=25)
+        label1.place(relx=0.5, y=20, anchor="center")
 
         # Menu lateral
-        estilo_label_menu_lateral = ("Verdana Bold", 12)
-        estilo_button_menu_lateral = ("Verdana", 8)
+        estilo_label_menu_lateral = ctk.CTkFont(family="Verdana", size=13, weight="bold", )
+        estilo_button_menu_lateral = ctk.CTkFont(family="Verdana", size=10, weight="bold")
+
+
         # Veículos título
-        label_veic = ttk.Label(root, text="Veículos", font=estilo_label_menu_lateral,background=self.cor1)
-        label_veic.place(x=20,y=50, width=120, height=30)
-        # botão listar veículos
-        button_listar_veic = tk.Button(root, text="Listar Veículos", font=estilo_button_menu_lateral,
-                                       background=self.cor2,
-                                       command=self.abrir_janela_veiculos)
-        button_listar_veic.place(x=20, y=80, width=120, height=30)
-        #botão registar veiculos
-        button_registar_veic = tk.Button(root, text="Registar", font=estilo_button_menu_lateral, background=self.cor2,
-                                         command=self.abrir_registar_veiculos)
-        button_registar_veic.place(x=20, y=110, width=120, height=30)
-        # botão editar veiculos
-        button_alterar_veic = tk.Button(root, text="Alterar", font=estilo_button_menu_lateral, background=self.cor2,
-                                        command=self.abrir_editar_veiculos)
-        button_alterar_veic.place(x=20, y=140, width=120, height=30)
-        # botão remover veiculos
-        button_remover_veic = tk.Button(root, text="Remover", font=estilo_button_menu_lateral, background=self.cor2,
-                                        command=self.abrir_remover_veiculos)
-        button_remover_veic.place(x=20, y=170, width=120, height=30)
+        label_veic = ctk.CTkLabel(root, text="Veículos", font=estilo_label_menu_lateral, width=120, height=30)
+        label_veic.place(x=20, y=50)
+
+        # Botão listar veículos
+        button_listar_veic = ctk.CTkButton(root, text="Listar Veículos", font=estilo_button_menu_lateral,
+                                           width=120, height=28,
+                                           command=self.abrir_janela_veiculos)
+        button_listar_veic.place(x=20, y=80)
+        #button_listar_veic.configure(border_width=1, border_color="white")  # Borda vermelha
+        button_listar_veic.place(x=20, y=80)
+
+        # Botão registar veículos
+        button_registar_veic = ctk.CTkButton(root, text="Registar", font=estilo_button_menu_lateral,
+                                             width=120, height=28,
+                                             command=self.abrir_registar_veiculos)
+        button_registar_veic.place(x=20, y=110)
+
+        # Botão editar veículos
+        button_alterar_veic = ctk.CTkButton(root, text="Alterar", font=estilo_button_menu_lateral, width=120, height=28,
+                                            command=self.abrir_editar_veiculos)
+        button_alterar_veic.place(x=20, y=140)
+
+        # Botão remover veículos
+        button_remover_veic = ctk.CTkButton(root, text="Remover", font=estilo_button_menu_lateral, width=120, height=28,
+                                            command=self.abrir_remover_veiculos)
+        button_remover_veic.place(x=20, y=170)
+
+
         # Clientes título
-        label_client = ttk.Label(root, text="Clientes", font=estilo_label_menu_lateral, background=self.cor1)
-        label_client.place(x=20, y=220, width=120, height=30)
-        # botão listar clientes
-        button_listar_client = tk.Button(root, text="Listar Clientes", font=estilo_button_menu_lateral,
-                                         background=self.cor2 ,
-                                         command=self.abrir_janela_clientes)
-        button_listar_client.place(x=20, y=250, width=120, height=30)
-        # botão registar clientes
-        button_registar_client = tk.Button(root, text="Registar", font=estilo_button_menu_lateral,
-                                           background=self.cor2 ,
-                                           command=self.abrir_registar_clientes)
-        button_registar_client.place(x=20, y=280, width=120, height=30)
-        # botão alterar clientes
-        button_alterar_client = tk.Button(root, text="Alterar", font=estilo_button_menu_lateral,
-                                          background=self.cor2,
-                                          command=self.abrir_editar_clientes)
-        button_alterar_client.place(x=20, y=310, width=120, height=30)
-        # botão remover clientes
-        button_remover_client = tk.Button(root, text="Remover", font=estilo_button_menu_lateral, background=self.cor2,
-                                          command=self.abrir_remover_clientes)
-        button_remover_client.place(x=20, y=340, width=120, height=30)
+        label_client = ctk.CTkLabel(root, text="Clientes", font=estilo_label_menu_lateral, width=120, height=28)
+        label_client.place(x=20, y=220)
+
+        # Botão listar clientes
+        button_listar_client = ctk.CTkButton(root, text="Listar Clientes", font=estilo_button_menu_lateral,
+                                             width=120, height=28, command=self.abrir_janela_clientes)
+        button_listar_client.place(x=20, y=250)
+
+        # Botão registar clientes
+        button_registar_client = ctk.CTkButton(root, text="Registar", font=estilo_button_menu_lateral,
+                                               width=120, height=28,
+                                               command=self.abrir_registar_clientes)
+        button_registar_client.place(x=20, y=280)
+
+        # Botão alterar clientes
+        button_alterar_client = ctk.CTkButton(root, text="Alterar", font=estilo_button_menu_lateral,
+                                              width=120, height=28,
+                                              command=self.abrir_editar_clientes)
+        button_alterar_client.place(x=20, y=310)
+
+        # Botão remover clientes
+        button_remover_client = ctk.CTkButton(root, text="Remover", font=estilo_button_menu_lateral,
+                                              width=120, height=28,
+                                              command=self.abrir_remover_clientes)
+        button_remover_client.place(x=20, y=340)
+
+
         # Reservas título
-        label_reservas = ttk.Label(root, text="Reservas", font=estilo_label_menu_lateral, background=self.cor1)
-        label_reservas.place(x=20, y=390, width=120, height=30)
-        # botão listar reservas
-        button_listar_reservas = tk.Button(root, text="Listar Reservas", font=estilo_button_menu_lateral,
-                                           background=self.cor2,
-                                           command=self.abrir_janela_reservas)
-        button_listar_reservas.place(x=20, y=420, width=120, height=30)
-        # botão registar reservas
-        button_registar_reservas = tk.Button(root, text="Registar", font=estilo_button_menu_lateral,
-                                             background=self.cor2,
-                                             command=self.abrir_registar_reservas)
-        button_registar_reservas.place(x=20, y=450, width=120, height=30)
-        # botão alterar reservas
-        button_alterar_reservas = tk.Button(root, text="Alterar", font=estilo_button_menu_lateral, background=self.cor2,
-                                            command=self.abrir_editar_reservas)
-        button_alterar_reservas.place(x=20, y=480, width=120, height=30)
-        # botão remover reservas
-        button_remover_reservas = tk.Button(root, text="Remover", font=estilo_button_menu_lateral, background=self.cor2,
-                                            command=self.abrir_remover_reservas)
-        button_remover_reservas.place(x=20, y=510, width=120, height=30)
-        # Pagamentos
-        label_pagamentos = ttk.Label(root, text="Pagamentos", font=estilo_label_menu_lateral, background=self.cor1)
-        label_pagamentos.place(x=20, y=560, width=120, height=30)
-        # botão listar pagamentos
-        button_listar_pagamentos = tk.Button(root, text="Listar Pagamentos", font=estilo_button_menu_lateral,
-                                             background=self.cor2,
-                                             command=self.abrir_janela_pagamentos)
-        button_listar_pagamentos.place(x=20, y=590, width=120, height=30)
-        # botão Registar pagamentos # CORRIGIR!!!
-        button_registar_pagamentos = tk.Button(root, text="Registar", font=estilo_button_menu_lateral,
-                                               background=self.cor2,
-                                                command=self.abrir_registar_pagamentos)
-        button_registar_pagamentos.place(x=20, y=620, width=120, height=30)
-        # botão Alterar pagamentos
-        button_alterar_pagamentos = tk.Button(root, text="Alterar", font=estilo_button_menu_lateral,
-                                              background=self.cor2,
-                                              command=self.abrir_editar_pagamentos)
-        button_alterar_pagamentos.place(x=20, y=650, width=120, height=30)
-        # botão remover pagamentos
-        button_remover_pagamentos = tk.Button(root, text="Remover", font=estilo_button_menu_lateral,
-                                              background=self.cor2,
-                                              command=self.abrir_remover_pagamentos)
-        button_remover_pagamentos.place(x=20, y=680, width=120, height=30)
-        # Botão deixar veiculo em manutenção
-        estilo_button_manutencao= ("Verdana Bold", 8)
-        button_manutencao = tk.Button(root, text="Agendar\nManutenção\nde Veículo!", font=estilo_button_manutencao,
-                                      background='azure4', foreground="white",
-                                      command=self.abrir_manutencao)
-        button_manutencao.place(x=20, y=730, width=120, height=50)
-        # Botão exibir Veículo
-        button_exibir_veiculo = tk.Button(root, text="Exibir Veículo", font=estilo_button_manutencao,
-                                          background=self.cor2,
-                                      command=self.exibir_imagem)
-        button_exibir_veiculo.place(x=20, y=800, width=120, height=30)
+        label_reservas = ctk.CTkLabel(root, text="Reservas", font=estilo_label_menu_lateral,
+                                      width=120, height=28)
+        label_reservas.place(x=20, y=390)
+
+        # Botão listar reservas
+        button_listar_reservas = ctk.CTkButton(root, text="Listar Reservas", font=estilo_button_menu_lateral,
+                                               width=120, height=28,
+                                               command=self.abrir_janela_reservas)
+        button_listar_reservas.place(x=20, y=420)
+
+        # Botão registar reservas
+        button_registar_reservas = ctk.CTkButton(root, text="Registar", font=estilo_button_menu_lateral,
+                                                 width=120, height=28,
+                                                 command=self.abrir_registar_reservas)
+        button_registar_reservas.place(x=20, y=450)
+
+        # Botão alterar reservas
+        button_alterar_reservas = ctk.CTkButton(root, text="Alterar", font=estilo_button_menu_lateral,
+                                                width=120, height=28,
+                                                command=self.abrir_editar_reservas)
+        button_alterar_reservas.place(x=20, y=480)
+
+        # Botão remover reservas
+        button_remover_reservas = ctk.CTkButton(root, text="Remover", font=estilo_button_menu_lateral,
+                                                width=120, height=28,
+                                                command=self.abrir_remover_reservas)
+        button_remover_reservas.place(x=20, y=510)
+
+
+        # Pagamentos título
+        label_pagamentos = ctk.CTkLabel(root, text="Pagamentos", font=estilo_label_menu_lateral,
+                                        width=120, height=28)
+        label_pagamentos.place(x=20, y=560)
+
+        # Botão listar pagamentos
+        button_listar_pagamentos = ctk.CTkButton(root, text="Listar Pagamentos", font=estilo_button_menu_lateral,
+                                                 width=120, height=28,
+                                                 command=self.abrir_janela_pagamentos)
+        button_listar_pagamentos.place(x=20, y=590)
+
+        # Botão registar pagamentos
+        button_registar_pagamentos = ctk.CTkButton(root, text="Registar", font=estilo_button_menu_lateral,
+                                                   width=120, height=28,
+                                                   command=self.abrir_registar_pagamentos)
+        button_registar_pagamentos.place(x=20, y=620)
+
+        # Botão alterar pagamentos
+        button_alterar_pagamentos = ctk.CTkButton(root, text="Alterar", font=estilo_button_menu_lateral,
+                                                  width=120, height=28,
+                                                  command=self.abrir_editar_pagamentos)
+        button_alterar_pagamentos.place(x=20, y=650)
+
+        # Botão remover pagamentos
+        button_remover_pagamentos = ctk.CTkButton(root, text="Remover", font=estilo_button_menu_lateral,
+                                                  width=120, height=28,
+                                                  command=self.abrir_remover_pagamentos)
+        button_remover_pagamentos.place(x=20, y=680)
+
+        # Botão agendar manutenção de veículo
+        estilo_button_manutencao = ctk.CTkFont(family="Verdana", size=10, weight="bold")
+        button_manutencao = ctk.CTkButton(root, text="Agendar\nManutenção\nde Veículo!", font=estilo_button_manutencao,
+                                          width=120, height=50,
+                                          fg_color='firebrick3', text_color="white",
+                                          command=self.abrir_manutencao) # fg_color='deep sky blue'
+        button_manutencao.place(x=20, y=730)
+
+        # Botão exibir veículo
+        button_exibir_veiculo = ctk.CTkButton(root, text="Exibir Veículo", font=estilo_button_manutencao,
+                                              width=120, height=30,
+                                              command=self.exibir_imagem)
+        button_exibir_veiculo.place(x=20, y=800)
 
 
         # Quadros do Dashboard - apresentação de listas:
-        estilo_label_Titulos_quadros = ("Verdana Bold", 10) # estilo de texto
+
+        # Estilo das fontes dos topos dos framebox
+        estilo_label_Titulos_quadros = ctk.CTkFont(family="Verdana", size=12, weight="bold")
+        estilo_total_financeiro = ctk.CTkFont(family="Verdana", size=18, weight="bold")
 
         # Veículos alugados
-        resultado_alugados = self.veiculos_alugados.veiculos_alugados() # variável recebe a função veiculos_alugados()
+        resultado_alugados = self.veiculos_alugados.veiculos_alugados()  # variável recebe a função veiculos_alugados()
         # Contagem do número de alugados
         alugados_path = "database/alugados.db"
         table_alugados = "alugado"
         quant_veiculos_alugados = contar_linhas_tabela(alugados_path, table_alugados)
         titulo_quant_veiculos_alugados = "Veículos Alugados -> Total: " + str(quant_veiculos_alugados)
-        label_veiculos_alugados = ttk.Label(root, text=titulo_quant_veiculos_alugados,
-                                            font=estilo_label_Titulos_quadros, background=self.cor1)
-        label_veiculos_alugados.place(x=165, y=50, width=500, height=30)
-        # Janela de Scroll
+        label_veiculos_alugados = ctk.CTkLabel(root, text=titulo_quant_veiculos_alugados,
+                                            font=estilo_label_Titulos_quadros)
+        # Definir a cor do texto para branco
+        label_veiculos_alugados.configure(text_color="white")
+        label_veiculos_alugados.place(x=165, y=50)
+
+        # Janela de Scroll usando tkinter
         veiculos_alugados_scrol = scrolledtext.ScrolledText(root, width=540, height=195, bg=self.cor3)
         veiculos_alugados_scrol.insert(tk.END, resultado_alugados)
         veiculos_alugados_scrol.pack(expand=True, fill='both')
         veiculos_alugados_scrol.place(x=165, y=80, width=540, height=195)
+        """
+        # versão usando CTK - fica mais bonito + deixa o texto todo desalinhado... :(
+        veiculos_alugados_scrol = CTkTextbox(root, width=540, height=195)
+        veiculos_alugados_scrol.insert(INSERT, resultado_alugados)
+        veiculos_alugados_scrol.pack(expand=True, fill='both')
+        veiculos_alugados_scrol.place(x=165, y=80)
+         """
 
         # Veículos com data da próxima revisão
-        resultado_revisao = self.revisao.revisao() # variável recebe a função revisao()
+        resultado_revisao = self.revisao.revisao()  # variável recebe a função revisao()
         # Contagem do número de veículos em revisão
         revisao_path = "database/revisoes.db"
         table_revisao = "revisao"
         quant_veiculos_revisao = contar_linhas_tabela(revisao_path, table_revisao)
         titulo_quant_veiculos_prox_rev = ("Veículos com data da próxima revisão -> Total: "
                                           + str(quant_veiculos_revisao))
-        label_veiculos_prox_rev = ttk.Label(root, text=titulo_quant_veiculos_prox_rev,
-                                            font=estilo_label_Titulos_quadros, background=self.cor1)
-        label_veiculos_prox_rev.place(x=720, y=50, width=500, height=30)
+        label_veiculos_prox_rev = ctk.CTkLabel(root, text=titulo_quant_veiculos_prox_rev,
+                                            font=estilo_label_Titulos_quadros)
+        label_veiculos_prox_rev.place(x=720, y=50)
+
         # Janela de Scroll
         veiculos_prox_rev_scrol = scrolledtext.ScrolledText(root, width=540, height=195, bg=self.cor3)
-        veiculos_prox_rev_scrol .insert(tk.END, resultado_revisao) # inserção no Quadro
+        veiculos_prox_rev_scrol.insert(tk.END, resultado_revisao)  # inserção no Quadro
         veiculos_prox_rev_scrol.pack(expand=True, fill='both')
         veiculos_prox_rev_scrol.place(x=720, y=80, width=540, height=195)
 
@@ -258,9 +309,10 @@ class Gerenciador:
         table_disponiveis = "disponivel"
         quant_veiculos_disponiveis = contar_linhas_tabela(disponiveis_path, table_disponiveis)
         titulo_listbox_veic_disp = "Veículos Disponíveis -> Total: " + str(quant_veiculos_disponiveis)
-        label_veiculos_disponiveis = ttk.Label(root, text=titulo_listbox_veic_disp,
-                                               font=estilo_label_Titulos_quadros, background=self.cor1)
-        label_veiculos_disponiveis.place(x=165, y=280, width=500, height=30)
+        label_veiculos_disponiveis = ctk.CTkLabel(root, text=titulo_listbox_veic_disp,
+                                               font=estilo_label_Titulos_quadros)
+        label_veiculos_disponiveis.place(x=165, y=280)
+
         # Janela de Scroll
         label_veiculos_disponiveis_scrol = scrolledtext.ScrolledText(root, width=540, height=195, bg=self.cor3)
         label_veiculos_disponiveis_scrol.insert(tk.END, resultado_disponiveis)
@@ -275,9 +327,10 @@ class Gerenciador:
         quant_veic_insp = contar_linhas_tabela(inspecao_path, table_inspecao)
         titulo_veic_insp = ("Veículos com a próxima inspeção obrigatória a expirar -> Total: "
                             + str(quant_veic_insp))
-        label_veiculos_insp = ttk.Label(root, text=titulo_veic_insp,
-                                        font=estilo_label_Titulos_quadros, background=self.cor1)
-        label_veiculos_insp.place(x=720, y=280, width=540, height=30)
+        label_veiculos_insp = ctk.CTkLabel(root, text=titulo_veic_insp,
+                                        font=estilo_label_Titulos_quadros)
+        label_veiculos_insp.place(x=720, y=280)
+
         # Janela de Scroll
         label_veiculos_insp_scrol = scrolledtext.ScrolledText(root, width=540, height=195, bg=self.cor3)
         label_veiculos_insp_scrol.insert(tk.END, resultado_inspecao)
@@ -288,12 +341,14 @@ class Gerenciador:
         ultimos_clientes = self.ultimos_clientes.ultimos_clientes()
         # título
         titulo_clientes_regist = "Últimos Clientes Registados"
-        label_ult_clientes_regist = ttk.Label(root, text=titulo_clientes_regist,
-                                              font=estilo_label_Titulos_quadros, background=self.cor1)
-        label_ult_clientes_regist.place(x=165, y=515, width=500, height=30)
+        label_ult_clientes_regist = ctk.CTkLabel(root, text=titulo_clientes_regist,
+                                              font=estilo_label_Titulos_quadros)
+        label_ult_clientes_regist.place(x=165, y=515)
+
         # Janela de Scroll
-        label_ult_clientes_regist_scrol= scrolledtext.ScrolledText(root, width=540, height=195, bg=self.cor3)
-        label_ult_clientes_regist_scrol.insert(tk.END, ultimos_clientes)# insere a função da classe Dashborad no "quadro"
+        label_ult_clientes_regist_scrol = scrolledtext.ScrolledText(root, width=540, height=195, bg=self.cor3)
+        label_ult_clientes_regist_scrol.insert(tk.END,
+                                               ultimos_clientes)  # insere a função da classe Dashborad no "quadro"
         label_ult_clientes_regist_scrol.pack(expand=True, fill='both')
         label_ult_clientes_regist_scrol.place(x=165, y=545, width=540, height=195)
 
@@ -304,9 +359,9 @@ class Gerenciador:
         table_reserva_mes = "reserva_mes"
         quant_reserva_mes = contar_linhas_tabela(reserva_mes_path, table_reserva_mes)
         titulo_reserva_mes = "Reservas do Mês -> Total: " + str(quant_reserva_mes)
-        label_reserva_mes = ttk.Label(root, text=titulo_reserva_mes, font=estilo_label_Titulos_quadros,
-                                       background=self.cor1)
-        label_reserva_mes.place(x=720, y=515, width=500, height=30)
+        label_reserva_mes = ctk.CTkLabel(root, text=titulo_reserva_mes, font=estilo_label_Titulos_quadros)
+        label_reserva_mes.place(x=720, y=515)
+
         # Janela de Scroll
         label_reserva_mes_scrol = scrolledtext.ScrolledText(root, width=540, height=195, bg=self.cor3)
         label_reserva_mes_scrol.insert(tk.END, reservas_mes)
@@ -319,11 +374,10 @@ class Gerenciador:
         exibir_manutencao_path = "database/manutencao.db"
         table_exibir_manutencao = "manutencao_veiculos"
         quant_exibir_manutencao = contar_linhas_tabela(exibir_manutencao_path, table_exibir_manutencao)
-        titulo_5_dias_manut = ("ATENÇÃO! Veículos em manutenção -> Total:  "
-                               + str(quant_exibir_manutencao))
-        label_5_dias_manut = ttk.Label(root, text=titulo_5_dias_manut, font=estilo_label_Titulos_quadros,
-                                       background=self.cor1)
-        label_5_dias_manut .place(x=165, y=750, width=530, height=30)
+        titulo_5_dias_manut = ("ATENÇÃO! Veículos em manutenção -> Total:  " + str(quant_exibir_manutencao))
+        label_5_dias_manut = ctk.CTkLabel(root, text=titulo_5_dias_manut, font=estilo_label_Titulos_quadros)
+        label_5_dias_manut.place(x=165, y=750)
+
         # Janela de Scroll
         label_5_dias_manut_scrol = scrolledtext.ScrolledText(root, width=540, height=50, bg=self.cor3)
         label_5_dias_manut_scrol.insert(tk.END, exibir_manutencao)
@@ -334,13 +388,11 @@ class Gerenciador:
         exibir_financeiro = self.financeiro.financeiro()
         # Soma dos pagamentos do mês
         titulo_total_financeiro = "TOTAL FINANCEIRO:  €" + str(exibir_financeiro)
-        estilo_total_financeiro = ("Verdana Bold", 14)
-        label_tot_financeiro = ttk.Label(root, text=titulo_total_financeiro,
-                                         font= estilo_total_financeiro, background=self.cor1)
-        label_tot_financeiro.place(x=820, y= 780, width=540, height=50)
+        label_tot_financeiro = ctk.CTkLabel(root, text=titulo_total_financeiro,
+                                         font=estilo_total_financeiro)
+        label_tot_financeiro.place(x=820, y=780,)
 
-
-    # Funções Botões/Veículos
+        # Funções Botões/Veículos
     def abrir_janela_veiculos(self):
         self.listar_veiculos.janela_listar_veiculos("Listar Veículos")
     def abrir_registar_veiculos(self):
@@ -418,8 +470,7 @@ class Gerenciador:
         return self.financeiro.financeiro()
 
 
-if __name__ == '__main__':
-    root = tk.Tk()
+if __name__ == "__main__":
+    root = ctk.CTk()
     app = Gerenciador(root)
     root.mainloop()
-
