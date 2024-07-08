@@ -9,7 +9,7 @@
 ## **Aplicação Desktop para gerenciamento de frotas de veículos**
 ---
 
-### *Aplicação de desktop para gerenciamento de uma locadora de veículos.*
+### *Gerenciamento de uma locadora de veículos.*
 1. Manter (registar, alterar, listar, remover os veículos, clientes, reservas e formas de pagamento.
 1. Exportar as informações em excel ou csv dos veículos, clientes, reservas e formas de pagamento.
 1. Dashboard inicial com informações (gráficos e relatórios):
