@@ -6,7 +6,7 @@
 
 
 # Gestor_de_Frota
-## **Aplicação para gerenciamento de frotas de veículos**
+## **Aplicação Desktop para gerenciamento de frotas de veículos**
 ---
 
 ### *Aplicação de desktop para gerenciamento de uma locadora de veículos.*
