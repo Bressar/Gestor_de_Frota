@@ -22,6 +22,7 @@
    - Quantidade de veículos disponíveis por tipo e categoria;
    - Reservas do mês e total financeiro; Veículos com data da próxima revisão a expirar (15 dias);
    - Veículos com data da inspeção obrigatória a expirar (15 dias).
+---
    
-##Competências:
+## Competências:
 Python · SQLite · Tkinter · Programação orientada a objetos (POO) · Pandas · Banco de dados · Desenvolvimento de back-end · Design de interface do usuário · Desenvolvimento de software
