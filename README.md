@@ -32,4 +32,4 @@
 ---
    
 ## Competências:
-Python · SQLite · Tkinter · Programação orientada a objetos (POO) · Pandas · Banco de dados · Desenvolvimento de back-end · Design de interface do usuário · Desenvolvimento de software
+Python · SQLite · Tkinter · Programação orientada a objetos (POO) · Pandas · Banco de dados · Desenvolvimento de back-end · Design de interface do usuário · Desenvolvimento de software.
